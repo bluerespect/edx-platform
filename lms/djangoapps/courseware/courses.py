@@ -23,6 +23,8 @@ from courseware.module_render import get_module
 from student.models import CourseEnrollment
 import branding
 
+from instructor.access import list_with_level_username
+
 log = logging.getLogger(__name__)
 
 
@@ -355,6 +357,14 @@ def get_courses_by_name(user, input_name):
     return [course for course in courses if get_course_about_section(course, 'title') == input_name]
 
 
+def get_course_by_author(user, auther):
+    
+    courses = branding.get_visible_courses()
+    courses = [c for c in courses if has_access(user, 'see_exists', c)]
+    
+    return [course for course in courses if auther == list_with_level_username(course, 'instructor')]
+
+
 def find_courses_by_text(user, category, input_text):
 
     if category == "org" :
@@ -364,8 +374,7 @@ def find_courses_by_text(user, category, input_text):
         return get_courses_by_name(user, input_text)
  
     elif category == "author" :
-		
-        return null;
+        return get_course_by_author(user, input_text)
     
     
 
